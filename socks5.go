@@ -10,7 +10,7 @@ const (
 	MethodGSSAPI byte = 0x01 // MUST support // todo
 	// MethodUsernamePassword is username/assword auth method
 	MethodUsernamePassword byte = 0x02 // SHOULD support
-	// MethodUnsupportAll means unsupport all given methods
+	// MethodUnsupportAll means all given methods are unsupported
 	MethodUnsupportAll byte = 0xFF
 
 	// UserPassVer is username/password auth protocol version

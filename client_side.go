@@ -8,7 +8,7 @@ import (
 
 var (
 	// ErrBadReply is the error when read reply
-	ErrBadReply = errors.New("Bad Reply")
+	ErrBadReply = errors.New("bad reply")
 )
 
 // NewNegotiationRequest return negotiation request packet can be writed into server

@@ -7,5 +7,5 @@ import (
 
 // TODO
 func (r *Request) bind(c net.Conn) error {
-	return errors.New("Unsupport BIND now")
+	return errors.New("bind is not supported")
 }

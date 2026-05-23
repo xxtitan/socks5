@@ -8,11 +8,11 @@ import (
 
 var (
 	// ErrVersion is version error
-	ErrVersion = errors.New("Invalid Version")
+	ErrVersion = errors.New("invalid version")
 	// ErrUserPassVersion is username/password auth version error
-	ErrUserPassVersion = errors.New("Invalid Version of Username Password Auth")
+	ErrUserPassVersion = errors.New("invalid version of username password auth")
 	// ErrBadRequest is bad request error
-	ErrBadRequest = errors.New("Bad Request")
+	ErrBadRequest = errors.New("bad request")
 )
 
 // NewNegotiationRequestFrom read negotiation requst packet from client

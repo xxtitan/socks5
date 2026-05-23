@@ -98,7 +98,7 @@ func (c *Client) DialWithLocalAddr(network, src, dst string, remoteAddr net.Addr
 		if err != nil {
 			return nil, err
 		}
-		c.UDPConn, err = DialUDP("udp", src, rp.Address())
+		c.UDPConn, err = DialUDP("udp", src, rp.Address(), nil, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -109,7 +109,7 @@ func (c *Client) DialWithLocalAddr(network, src, dst string, remoteAddr net.Addr
 		}
 		return c, nil
 	}
-	return nil, errors.New("unsupport network")
+	return nil, errors.New("unsupported network")
 }
 
 func (c *Client) Read(b []byte) (int, error) {
@@ -202,7 +202,7 @@ func (c *Client) Negotiate(laddr net.Addr) error {
 		src = laddr.String()
 	}
 	var err error
-	c.TCPConn, err = DialTCP("tcp", src, c.Server)
+	c.TCPConn, err = DialTCP("tcp", src, c.Server, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -224,7 +224,7 @@ func (c *Client) Negotiate(laddr net.Addr) error {
 		return err
 	}
 	if rp.Method != m {
-		return errors.New("Unsupport method")
+		return errors.New("unsupported method")
 	}
 	if m == MethodUsernamePassword {
 		urq := NewUserPassNegotiationRequest([]byte(c.UserName), []byte(c.Password))
@@ -251,7 +251,7 @@ func (c *Client) Request(r *Request) (*Reply, error) {
 		return nil, err
 	}
 	if rp.Rep != RepSuccess {
-		return nil, errors.New("Host unreachable")
+		return nil, errors.New("host unreachable")
 	}
 	return rp, nil
 }

@@ -2,8 +2,8 @@
 
 [中文](README_ZH.md)
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/txthinking/socks5)](https://goreportcard.com/report/github.com/txthinking/socks5)
-[![GoDoc](https://godoc.org/github.com/txthinking/socks5?status.svg)](https://godoc.org/github.com/txthinking/socks5)
+[![Go Report Card](https://goreportcard.com/badge/github.com/xxtitan/socks5)](https://goreportcard.com/report/github.com/xxtitan/socks5)
+[![GoDoc](https://godoc.org/github.com/xxtitan/socks5?status.svg)](https://godoc.org/github.com/xxtitan/socks5)
 
 [🗣 News](https://t.me/s/txthinking_news)
 [🩸 Youtube](https://www.youtube.com/txthinking)
@@ -18,7 +18,7 @@ Goals: KISS, less is more, small API, code is like the original protocol.
 ### Install
 
 ```
-$ go get github.com/txthinking/socks5
+$ go get github.com/xxtitan/socks5
 ```
 
 ### Struct is like concept in protocol
@@ -66,15 +66,44 @@ $ go get github.com/txthinking/socks5
 
 -   `type Server struct`
 -   `type Handler interface`
-    -   `TCPHandle(*Server, *net.TCPConn, *Request) error`
+    -   `TCPHandle(*Server, *net.TCPConn, *Request, *User) error`
     -   `UDPHandle(*Server, *net.UDPAddr, *Datagram) error`
+-   `func NewServer(addr, host, username, password string, bindCidrs []string, tcpTimeout, udpTimeout int) (*Server, error)`
+-   `func NewClassicServer(addr, host, username, password string, tcpTimeout, udpTimeout int) (*Server, error)`
 
 Example:
 
 ```
-server, _ := NewClassicServer(addr, ip, username, password, tcpTimeout, udpTimeout)
+server, _ := socks5.NewServer(addr, host, username, password, bindCidrs, tcpTimeout, udpTimeout)
 server.ListenAndServe(Handler)
 ```
+
+`bindCidrs` controls the outbound source IP pool. It accepts IPv4 and IPv6 CIDRs, for example:
+
+```
+bindCidrs := []string{"198.18.0.0/15", "2001:db8::/48"}
+server, _ := socks5.NewServer("127.0.0.1:1080", "127.0.0.1", "titan", "secret", bindCidrs, 600, 600)
+```
+
+When both IPv4 and IPv6 CIDRs are available, the dialer selects a target IP version that is compatible with the destination and then chooses a source IP from the matching CIDR list. If the destination only supports one IP version, the matching CIDR family must be configured.
+
+#### Password session format
+
+The username/password authentication password may include an outbound-IP session suffix:
+
+-   `password`: authenticate with the configured password only.
+-   `password-session`: authenticate with `password` and carry `session` as the session id. The outbound IP is not cached without `duration`.
+-   `password-session-duration`: authenticate with `password`, use `session` as the session id, and reuse the selected outbound IP for `duration`.
+
+`duration` supports `s`, `m`, `h`, and `d`, for example `30s`, `10m`, `2h`, or `1d`.
+
+Example:
+
+```
+client, _ := socks5.NewClient("127.0.0.1:1080", "titan", "secret-user1-1h", 600, 600)
+```
+
+The server validates only the base password before the first `-`. In the example above, the configured server password is `secret`, the session id is `user1`, and the selected outbound IP is reused for one hour. If the session suffix is used, keep the base password free of `-`.
 
 **Client**: support both TCP and UDP and return net.Conn
 
